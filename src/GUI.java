@@ -27,7 +27,7 @@ public class GUI {
 
     }
 
-    public static void createFrame(){
+    private static void createFrame(){
         GUI = new JFrame();
         GUI.setVisible(false);
         GUI.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -35,35 +35,21 @@ public class GUI {
         GUI.setSize((int)(Toolkit.getDefaultToolkit().getScreenSize().getWidth()/1.5),(int)(Toolkit.getDefaultToolkit().getScreenSize().getHeight()/1.5));
 
         ContentPane = GUI.getContentPane();
+        GUI.setVisible(true);
         createRecetption("");
 
 
 
 
-        GUI.setVisible(true);
+
 
     }
 
     //takes the contentpane of the frame and modifies it
-    public static void createRecetption(String message){
-
-        //I don't use a method to do the modifications to the content panes as all the frames have slightly different needs
-        //making current container invisible
-        ContentPane.setVisible(false);
-        //clearing frame's content pane
-        ContentPane.removeAll();
-        //setting the size of the container
-        ContentPane.setSize(GUI.getSize());
-
-        FlowLayout receptionLayout = new FlowLayout();
-        //setting horizontal gap between components
-        receptionLayout.setHgap(ContentPane.getWidth()/5);
-        //setting vertical gap between components
-        receptionLayout.setVgap(ContentPane.getHeight()/16);
-
+    private static void createRecetption(String message){
 
         //setting the layout of the container
-        ContentPane.setLayout(receptionLayout);
+        ContentPane.setLayout(clearContentPaneAddLayout((ContentPane.getWidth()/5),(ContentPane.getHeight()/16)));
 
 
         //creating label with the word reception
@@ -159,24 +145,13 @@ public class GUI {
     }
 
 
-    public static void createNewPatientDoctor(String patientDoctor){
+    private static void createNewPatientDoctor(String patientDoctor){
 
-        //making current container invisible
-        ContentPane.setVisible(false);
-        //clearing frame's content pane
-        ContentPane.removeAll();
-        //setting the size of the container
-        ContentPane.setSize(GUI.getSize());
 
-        FlowLayout newPatientDoctorLayout = new FlowLayout();
-        //setting horizontal gap between components
-        newPatientDoctorLayout.setHgap(ContentPane.getWidth()/2);
-        //setting vertical gap between components
-        newPatientDoctorLayout.setVgap(ContentPane.getHeight()/16);
 
 
         //setting the layout of the container
-        ContentPane.setLayout(newPatientDoctorLayout);
+        ContentPane.setLayout(clearContentPaneAddLayout((ContentPane.getWidth()/2),(ContentPane.getHeight()/16)));
 
         JLabel newPatientDoctorLabel = new JLabel("New "+patientDoctor,JLabel.CENTER);
         //border is mainly used for testing, to see if it is positioned properly
@@ -222,7 +197,7 @@ public class GUI {
         //adding border
         newPatientDoctorID.setBorder(BLACK_BORDER);
 
-        if(patientDoctor==PATIENT){
+        if(patientDoctor.equals(PATIENT)){
             //id of patient
             newPatientDoctorID.setText("ID = " + Patient.totalPatients.size());
         }
@@ -242,7 +217,7 @@ public class GUI {
         //setting border
         submitPatientDoctor.setBorder(BLACK_BORDER);
 
-        //adding  functionality to the button
+        //creating a new doctor or patient when the button is pressed
         submitPatientDoctor.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e){
                 //adds a new doctor or patient and then calls the next method
@@ -270,61 +245,57 @@ public class GUI {
         //adding it to the container
         ContentPane.add(submitPatientDoctor);
 
-
-        //button to go back
-        JButton backButton = new JButton("Back");
-        //setting size
-        backButton.setPreferredSize(new Dimension(newPatientDoctorLayout.getVgap(),newPatientDoctorLayout.getVgap()));
-        //setting border
-        backButton.setBorder(BLACK_BORDER);
-        //adding functionality to the button
-        backButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                createRecetption("");
-            }
-        });
-        backButton.setVisible(true);
-        //adding it to the container
-        ContentPane.add(backButton);
+        //creating back button
+        ContentPane.add(createBackButton("cancelled creating "+ patientDoctor));
 
 
 
-
+        //setting the container visible after all the components have been added
         ContentPane.setVisible(true);
     }
 
-    public static void createSymptoms(Patient patient){
-        //making current container invisible
-        ContentPane.setVisible(false);
-        //clearing frame's content pane
-        ContentPane.removeAll();
-        //setting the size of the container
-        ContentPane.setSize(GUI.getSize());
-
-        //creating new layout
-        FlowLayout symptomsLayout = new FlowLayout();
-        //setting horizontal and vertical gap between components
-        symptomsLayout.setHgap(40);
-        symptomsLayout.setVgap(40);
-
-        ContentPane.setLayout(symptomsLayout);
+    private static void createSymptoms(Patient patient){
 
 
+        //clearning container and adding a layout
+        ContentPane.setLayout(clearContentPaneAddLayout(40,40));
+
+        //adding a label informing a user what to do
         JLabel symptomsLabel= new JLabel("Please select the symptoms you are experiencing and Dr."+patient.doctor.name+" will give you a diagnosis",JLabel.CENTER);
+        //setting size
         symptomsLabel.setPreferredSize(new Dimension(ContentPane.getWidth(),ContentPane.getHeight()/5));
-        symptomsLabel.setBorder(BLACK_BORDER);
+        //this is used mainly for testing
+        //symptomsLabel.setBorder(BLACK_BORDER);
+        //setting visible
         symptomsLabel.setVisible(true);
+        //adding it to the container
         ContentPane.add(symptomsLabel);
 
 
-
+        //creating a radio button for each symptom, so the user can select which ever symptoms they have
         for(String symptom:Diagnosis.symptomsList){
-
-            JRadioButton symptomButton = new JRadioButton(symptom);
-            //symptomButton.setSize();
+            //creating radio button and replacing all the underscores with spaces, since symptoms names have underscores in them
+            JRadioButton symptomButton = new JRadioButton(symptom.replaceAll("_"," "));
+            //setting a border on them
             symptomButton.setBorder(BLACK_BORDER);
-            //symptomButton.setSize(40,40);
+            //setting them visible
             symptomButton.setVisible(true);
+
+            //if the button is selected then the symptom is added to the symptomsShown string, if it is unselected then the symptoms is removed from the symptomsShown string
+            symptomButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    if(symptomButton.isSelected()){
+                        patient.symptomsShown=patient.symptomsShown+symptom;
+                    }
+                    else {
+                        patient.symptomsShown = patient.symptomsShown.replaceAll(symptom, "");
+                    }
+                }
+
+
+            });
+
             ContentPane.add(symptomButton);
 
         }
@@ -334,13 +305,88 @@ public class GUI {
         proceedButton.setBorder(BLACK_BORDER);
         proceedButton.setVisible(true);
 
-        //TODO: add button functoinality
+        proceedButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (patient.symptomsShown != "") {
+                    foundDiagnosis(patient, patient.symptomsShown, false);
+                    System.out.println(patient.symptomsShown);
+                } else {
+                    String warning = " Please select atleast one symtpom";
+                    if(!(symptomsLabel.getText().contains(warning))){
+                        symptomsLabel.setText(warning);
+                    }
+                }
+            }
+        });
+
+
 
         ContentPane.add(proceedButton);
 
-        System.out.println("symptoms list");
+        ContentPane.add(createBackButton("patient did not visit the doctor"));
 
         ContentPane.setVisible(true);
     }
 
+    private static void foundDiagnosis(Patient patient,String patientSymptoms, Boolean isEmergency){
+
+
+        ContentPane.setLayout(clearContentPaneAddLayout(40,40));
+
+        JLabel diagnosis = new JLabel("",JLabel.CENTER);
+        diagnosis.setPreferredSize(new Dimension(ContentPane.getWidth(),(ContentPane.getHeight()/4)));
+        diagnosis.setBorder(BLACK_BORDER);
+        if(isEmergency){
+            diagnosis.setText("After taking a look at your symptom(s) Dr."+patient.doctor.name+" said that you most likely have severe " +patient.findDiagnosis(patientSymptoms));
+        }
+        else{
+            diagnosis.setText("After taking a look at your symptom(s) Dr."+patient.doctor.name+" said that you most likely have " +patient.findDiagnosis(patientSymptoms));
+        }
+        diagnosis.setVisible(true);
+        ContentPane.add(diagnosis);
+
+        ContentPane.add(createBackButton("diagnosis given"));
+
+        ContentPane.setVisible(true);
+    }
+
+    //creating a method for this as it is used at the beginning of almost every method.
+    private static FlowLayout clearContentPaneAddLayout(int hGap, int vGap){
+
+        //making current container invisible
+        ContentPane.setVisible(false);
+        //clearing frame's content pane
+        ContentPane.removeAll();
+        //setting the size of the container
+        ContentPane.setSize(GUI.getSize());
+
+        //creating new layout
+        FlowLayout flowlayout  = new FlowLayout();
+        //setting horizontal and vertical gap between components
+        flowlayout.setHgap(hGap);
+        flowlayout.setVgap(vGap);
+
+        return flowlayout;
+    }
+
+    //method for creating backbutton as it is used for almost every frame
+    private static JButton createBackButton (String message){
+
+        //button to go back
+        JButton backButton = new JButton("Back");
+        //setting size
+        backButton.setPreferredSize(new Dimension(40,40));
+        //setting border
+        backButton.setBorder(BLACK_BORDER);
+        //adding functionality to the button
+        backButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                createRecetption(message);
+            }
+        });
+        backButton.setVisible(true);
+
+        return backButton;
+    }
 }

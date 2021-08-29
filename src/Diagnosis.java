@@ -5,11 +5,13 @@ import java.util.LinkedList;
 public class Diagnosis  {
 
     //making a list of symptoms so other classes can access them.
-public static final LinkedList<String> symptomsList= new LinkedList<String>();
-    public static final LinkedList<String> diagnosisList= new LinkedList<String>();
+    public static final LinkedList<String> symptomsList= new LinkedList<String>();
+    //making a list of diagnosis so other classes can access them.
+    public static final LinkedList<Diagnosis> diagnosisList= new LinkedList<Diagnosis>();
 
     //list of symptoms, not directly putting them in an array as that would make it difficult to add and remove symptoms
     //and using separate variables as that makes it easier to edit their values without breaking the program
+    //adding a space after each
     private static final String FEVER="FEVER ";
     private static final String RUNNY_NOSE = "RUNNY_NOSE ";
     private static final String HEADACHE = "HEADACHE ";
@@ -35,8 +37,11 @@ public static final LinkedList<String> symptomsList= new LinkedList<String>();
 
     //constructor
     Diagnosis (String symptoms,String name){
+        //setting the name and the symptoms of the diagnosis
         this.symptoms=symptoms;
         this.diagnosisName = name;
+        //adding the diagnosis to the diagnosis list
+        diagnosisList.addLast(this);
         }
 
 
@@ -58,17 +63,9 @@ public static final LinkedList<String> symptomsList= new LinkedList<String>();
                             System.out.println(e.getStackTrace());
                         }
                     }
-                    //if it is and object of this class it is added into the diagnosis list
-                    else if(declaredField.getType().equals(Diagnosis.class)){
-                        try {
-                            diagnosisList.add(String.valueOf(declaredField.get(new Object())));
-                        } catch (Exception e) {
-                            System.out.println(e.getStackTrace());
-                        }
-                    }
+                    //I tried to add the objects from here using declared field but realized it was easier to add them from the constructor as it only requires one line of code.
                 }
             }
-
 
         }
     //the symptoms of a disease
@@ -95,13 +92,17 @@ public static final LinkedList<String> symptomsList= new LinkedList<String>();
 
     private static final Diagnosis pneumonia= new Diagnosis(COUGH+FEVER+APPETITE_LOSS+TIRED+DIFFICULTY_BREATHING,"Pneumonia");
 
-    private static final Diagnosis brokenArm= new Diagnosis(ARMS_PAINING,"Broken Arms");
+    private static final Diagnosis brokenArm= new Diagnosis(ARMS_PAINING,"fractures in your arm");
 
-    private static final Diagnosis brokenLeg= new Diagnosis(LEGS_PAINING,"Broken Legs");
+    private static final Diagnosis brokenLeg= new Diagnosis(LEGS_PAINING,"fractures in your leg");
 
     private static final Diagnosis arthritis = new Diagnosis(JOINTS_PAINING,"Arthritis");
 
     private static final Diagnosis asthma = new Diagnosis(DIFFICULTY_BREATHING,"Asthma");
+
+    private static final Diagnosis stomachBug = new Diagnosis(STOMACH_PAINING,"Stomach Bug");
+
+    private static final Diagnosis heartDisease = new Diagnosis(CHEST_PAINING, "Heart Disease");
 
 
 
