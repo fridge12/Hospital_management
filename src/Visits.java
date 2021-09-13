@@ -1,3 +1,4 @@
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.HashMap;
 
@@ -6,12 +7,14 @@ public class Visits {
     //using a hashmap as I wanted to learn how to use it
     HashMap<Diagnosis,Integer> possibleDiagnosis = new HashMap<>();
     //time at which the patient checked in
-    LocalTime enteranceTime;
+    LocalDateTime enteranceTime;
     //for the most likely diagnosis
     Diagnosis confirmedDiagnosis ;
-
-    Visits(){
-        enteranceTime = LocalTime.now() ;
+    //to find out which visit it is
+    int visitNumber;
+    Visits(int totalVisits){
+        enteranceTime = LocalDateTime.now();
         System.out.println(enteranceTime);
+        visitNumber= totalVisits+1;
     }
 }
