@@ -12,9 +12,13 @@ public class Visits {
     Diagnosis confirmedDiagnosis ;
     //to find out which visit it is
     int visitNumber;
+
+    //constructor which takes the previous number of visits to the doctor
     Visits(int totalVisits){
+        //setting time of the visit
         enteranceTime = LocalDateTime.now();
         System.out.println(enteranceTime);
+        //setting visit number
         visitNumber= totalVisits+1;
     }
 }

@@ -3,20 +3,25 @@ import java.util.Map;
 import java.util.Scanner;
 
 public class Patient {
-
+    //list that contains all the patients
     public static LinkedList<Patient> totalPatients= new LinkedList<Patient>();
 
+    //each patient has a name, unique id number, doctor, symptoms and list of visits to the doctor
     String name="";
     int ID;
     Doctor doctor;
     String symptomsShown = "";
     LinkedList<Visits> doctorVisits = new LinkedList<Visits>();
 
-
+    //constructor which takes name as an input
     Patient(String name){
+        //setting name to the given name
         this.name= name;
+        //setting ID to the number of patients
         this.ID = totalPatients.size();
+        //adding it to the list which contains all patients
         totalPatients.addLast(this);
+        //setting its doctor
         this.setDoctor();
     }
 
@@ -43,7 +48,10 @@ public class Patient {
     public String findDiagnosis(String symptoms){
         //takes the names of the symptoms as the input
         Scanner in = new Scanner(symptoms);
+
+        //need to use try catch as sometimes doctorvisits.getlast produces and exception
         try{
+            //if the last doctor visit is null then we can use it as there is nothing in there, otherwise we need to create a new doctor visit which is null
             if(doctorVisits.getLast().confirmedDiagnosis!=null){
                 //creates a new visit to the doctor
                 doctorVisits.addLast(new Visits(doctorVisits.size()));
@@ -83,14 +91,31 @@ public class Patient {
 
 
         }
+
+
         //this checks which diagnosis has the most matching symptoms to the symptoms the patients is showing
         int mostMatchingSymptoms=0;
         for(Map.Entry<Diagnosis, Integer> ent: doctorVisits.getLast().possibleDiagnosis.entrySet()){
+            System.out.println(ent.getKey().diagnosisName);
         if(ent.getValue()>mostMatchingSymptoms){
             System.out.println(ent.getValue());
             //setting confirmed diagnosis to the diagnosis which has the most matching symptoms
             doctorVisits.getLast().confirmedDiagnosis=ent.getKey();
             mostMatchingSymptoms= ent.getValue();
+        }
+
+        //if the current diagnosis has the same number of matching symptoms, then to calculate the most correct diagnosis
+        //i am taking the ratio of matching symptoms to total symptoms
+        //and then multiplying the value by the total number of symptoms shown by the patient
+
+        else if(ent.getValue()==mostMatchingSymptoms){
+            double prevSymptoms=noOfSymptoms(symptomsShown.trim())*((double)mostMatchingSymptoms/noOfSymptoms(doctorVisits.getLast().confirmedDiagnosis.symptoms.trim()));
+            double currentSymptoms =noOfSymptoms(symptomsShown.trim())*((double)mostMatchingSymptoms/noOfSymptoms(ent.getKey().symptoms.trim()));
+            System.out.println(prevSymptoms+" "+currentSymptoms);
+
+            if(currentSymptoms>prevSymptoms){
+                doctorVisits.getLast().confirmedDiagnosis= ent.getKey();
+            }
         }
         }
 
@@ -98,6 +123,17 @@ public class Patient {
         System.out.println(doctorVisits.getLast().confirmedDiagnosis);
         //returning the name of the diagnosis
         return doctorVisits.getLast().confirmedDiagnosis.diagnosisName;
+    }
+
+    //this method returns the total number of symptoms in a disease
+    private static double noOfSymptoms(String symptoms){
+        Scanner sc = new Scanner(symptoms);
+        int ctr=0;
+        while(sc.hasNext()){
+            ctr++;
+            sc.next();
+        }
+        return ctr;
     }
 
 }

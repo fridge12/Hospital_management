@@ -11,45 +11,47 @@ import java.awt.event.FocusListener;
 import java.time.format.DateTimeFormatter;
 
 
-//I am mainly going to use static methods since there will only be one frame
+//I am mainly going to use static methods since there will only be one frame which is static
 public class GUI {
 
     //the frame
     public static JFrame GUI;
-    //these will be used to differenciate between patients and doctors
+    //these will be used to differenciate between patients and doctors when calling certain methods.
     private static final String PATIENT = "Patient";
     private static final String DOCTOR = "Doctor";
+
     //the container in which the modifications to the screen will happen
     private static Container ContentPane;
 
-    //a plane black border
+    //a plane black border which is mainly used to see if the components are aligned correctly
     private static final LineBorder BLACK_BORDER= new LineBorder(Color.BLACK);
 
     public static void main(String args[]){
-
+    //calling method to create frame
     createFrame();
 
     }
 
     private static void createFrame(){
+        //creating new frame
         GUI = new JFrame();
         GUI.setVisible(false);
+        //making it so that when frame is closed the program exits.
         GUI.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        //setting screen size to half the size of the computer screen so if frame is unmaximized it is still usable
+        //setting frame size to slightly more than half the size of the computer screen so if frame is unmaximized it is still usable
         GUI.setSize((int)(Toolkit.getDefaultToolkit().getScreenSize().getWidth()/1.5),(int)(Toolkit.getDefaultToolkit().getScreenSize().getHeight()/1.5));
 
+        //setting the container equal to the container of the frame
         ContentPane = GUI.getContentPane();
+        //setting frame to visible
         GUI.setVisible(true);
+
+        //calling method to create the reception
         createRecetption("");
-
-
-
-
-
 
     }
 
-    //takes the contentpane of the frame and modifies it
+    //method to create reception, where user can decide between new patient/doctor , patient/doctor login or emergency
     private static void createRecetption(String message){
 
         removeEmptyPatients();
@@ -57,6 +59,7 @@ public class GUI {
         //setting the layout of the container
         ContentPane.setLayout(clearContentPaneAddLayout((ContentPane.getWidth()/5),(ContentPane.getHeight()/16)));
 
+        System.out.println(ContentPane.getSize());
 
         //creating label with the word reception
         JLabel receptionLabel = new JLabel("Reception",JLabel.CENTER);
@@ -86,7 +89,9 @@ public class GUI {
         //adding it to the container
         ContentPane.add(newPatient);
 
-        //creating button to add patient
+
+
+        //creating button to add doctor
         JButton newDoctor = new JButton("New Doctor");
         //setting size of button
         newDoctor.setPreferredSize(new Dimension((ContentPane.getWidth()/4),(ContentPane.getWidth()/20)));
@@ -107,7 +112,7 @@ public class GUI {
 
 
 
-        //creating button to add patient
+        //creating button for patient login
         JButton loginPatient = new JButton("Patient login");
         //setting size of button
         loginPatient.setPreferredSize(new Dimension((ContentPane.getWidth()/4),(ContentPane.getWidth()/20)));
@@ -123,7 +128,9 @@ public class GUI {
         //adding it to the container
         ContentPane.add(loginPatient);
 
-        //creating button to add patient
+
+
+        //creating button for doctor login
         JButton loginDoctor= new JButton("Doctor login");
         //setting size of button
         loginDoctor.setPreferredSize(new Dimension((ContentPane.getWidth()/4),(ContentPane.getWidth()/20)));
@@ -138,14 +145,16 @@ public class GUI {
         //adding it to the container
         ContentPane.add(loginDoctor);
 
-        //creating button to add patient
+
+
+        //creating button for emergency
         JButton emergency= new JButton("emergency");
         //setting size of button
         emergency.setPreferredSize(new Dimension((ContentPane.getWidth()/4),(ContentPane.getWidth()/20)));
         //setting border
         emergency.setBorder(BLACK_BORDER);
         //setting background color to a slightly transparent red
-        emergency.setBackground(new Color(255,0,0,180));
+        emergency.setBackground(new Color(255,0,0));
         //adding fucntionality to the button
         emergency.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e){
@@ -168,14 +177,12 @@ public class GUI {
         ContentPane.setVisible(true);
     }
 
-
+    //used to create new doctors and patients depending on the given string
     private static void createNewPatientDoctor(String patientDoctor){
-
-
-
 
         //setting the layout of the container
         ContentPane.setLayout(clearContentPaneAddLayout((ContentPane.getWidth()/2),(ContentPane.getHeight()/16)));
+
 
         JLabel newPatientDoctorLabel = new JLabel("New "+patientDoctor,JLabel.CENTER);
         //border is mainly used for testing, to see if it is positioned properly
@@ -194,13 +201,14 @@ public class GUI {
 
         //adding focus listener to set hint in the textfield
         newPatientDoctorName.addFocusListener( new FocusListener(){
+            //when the textfield has gained focus and text is equal to Name it will set text to empty
             public void focusGained(FocusEvent e){
                 if(newPatientDoctorName.getText().equals("Name")) {
                     newPatientDoctorName.setText("");
                 }
             }
 
-
+            //when the textfield loses focus, if the text is empty it sets the text to Name
             public void focusLost(FocusEvent e) {
                 if(newPatientDoctorName.getText().equals("")) {
                     newPatientDoctorName.setText("Name");
@@ -214,7 +222,7 @@ public class GUI {
         ContentPane.add(newPatientDoctorName);
 
 
-        //label to enter name of patient/doctor
+        //label to inform user about the id of the patient/doctor
         JLabel newPatientDoctorID = new JLabel("");
         //setting size
         newPatientDoctorID.setPreferredSize(new Dimension((ContentPane.getWidth()/4),(ContentPane.getWidth()/20)));
@@ -234,7 +242,9 @@ public class GUI {
         //adding to container
         ContentPane.add(newPatientDoctorID);
 
-        //button to submit
+
+
+        //button to submit which will create a new patient/doctor
         JButton submitPatientDoctor = new JButton("Submit");
         //setting size of button
         submitPatientDoctor.setPreferredSize(new Dimension((ContentPane.getWidth()/4),(ContentPane.getWidth()/20)));
@@ -256,10 +266,12 @@ public class GUI {
                     createRecetption("Sorry, there are no doctors");
 
                     }
-                    else {
+                //adding a patient since we have already checked if doctors are available
+                else {
                     //adding a new patient
                     Patient patient = new Patient(newPatientDoctorName.getText());
                     System.out.println("button pressed");
+                    //creating symptoms for doctor visit
                     createSymptoms(patient);
 
                 }
@@ -278,6 +290,7 @@ public class GUI {
         ContentPane.setVisible(true);
     }
 
+    //creating symptom selection screen
     private static void createSymptoms(Patient patient){
 
 
@@ -298,6 +311,7 @@ public class GUI {
         //creating the symptom buttons the user can select
         createSymptomsList(patient);
 
+        //button that will take the user to the screen which will give then the diagnosis
         JButton proceedButton = new JButton("Proceed");
         proceedButton.setPreferredSize(new Dimension((ContentPane.getWidth()/4),(ContentPane.getWidth()/20)));
         proceedButton.setBorder(BLACK_BORDER);
@@ -306,8 +320,10 @@ public class GUI {
         proceedButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                //it will only proceed if symptoms shown is not empty
                 if (!(patient.symptomsShown.isBlank())) {
                     System.out.println(patient.symptomsShown+"symptom");
+                    //calls method to go to next screen
                     createFoundDiagnosis(patient, patient.symptomsShown, false);
 
                 } else {
@@ -331,20 +347,40 @@ public class GUI {
     private static void createFoundDiagnosis(Patient patient,String patientSymptoms, Boolean isEmergency){
 
         //clearing container and adding layout
-        ContentPane.setLayout(clearContentPaneAddLayout(40,40));
+        ContentPane.setLayout(clearContentPaneAddLayout(ContentPane.getWidth()/2,40));
 
-        //adding label which will tell the user what diagnosis they have
-        JLabel diagnosis = new JLabel("",JLabel.CENTER);
-        //setting size
-        diagnosis.setPreferredSize(new Dimension(ContentPane.getWidth(),(ContentPane.getHeight()/4)));
+        //adding textpane which will tell the user what diagnosis they have
+        JTextPane diagnosis = new JTextPane();
+        //setting editable to false so that the user can not edit the textpane
+        diagnosis.setEditable(false);
+
+        //it is easier to set the text in a string and then put in a jtextpane
+        String diagnosis_text= "";
+
         //this is mainly used for testing
         //diagnosis.setBorder(BLACK_BORDER);
+
+
         if(isEmergency){
-            diagnosis.setText("After taking a look at your symptom(s) Dr."+patient.doctor.name+" said that you most likely have severe " +patient.findDiagnosis(patientSymptoms));
+            diagnosis_text= diagnosis_text.concat("Visit with Dr."+patient.doctor.name+" \n\nDiagnosis: severe " +patient.findDiagnosis(patientSymptoms)+"\n\nCure:"+ patient.doctorVisits.getLast().confirmedDiagnosis.severeCure);
         }
         else{
-            diagnosis.setText("After taking a look at your symptom(s) Dr."+patient.doctor.name+" said that you most likely have " +patient.findDiagnosis(patientSymptoms));
+            diagnosis_text= diagnosis_text.concat("Visit with Dr."+patient.doctor.name+" \n\nDiagnosis:" +patient.findDiagnosis(patientSymptoms)+"\n\nCure:"+ patient.doctorVisits.getLast().confirmedDiagnosis.cure);
         }
+
+        //the next three lines are to set the text alignment to center in the textpane
+        SimpleAttributeSet center = new SimpleAttributeSet();
+        StyleConstants.setAlignment(center,StyleConstants.ALIGN_CENTER);
+        diagnosis.getStyledDocument().setParagraphAttributes(0,diagnosis.getText().length(), center , false);
+
+        System.out.println(diagnosis_text);
+
+        //setting text
+        diagnosis.setText(diagnosis_text);
+
+        //setting size at the end to wrap contents
+        diagnosis.setPreferredSize(diagnosis.getPreferredSize());
+
         diagnosis.setVisible(true);
         ContentPane.add(diagnosis);
 
@@ -353,23 +389,26 @@ public class GUI {
         ContentPane.setVisible(true);
     }
 
+    //method to create screen if there is an emergency, it has patient creation and symptom selection in one screen
     private static void createEmergency() {
 
         if (Doctor.totalDoctors.size() == 0) {
             createRecetption("Sorry, there are no doctors");
         }
         else {
-
+        //I need to create a patient without a name as createSymptomsList needs a patient as an input
         Patient patient = new Patient("");
 
         ContentPane.setLayout(clearContentPaneAddLayout(40, 40));
 
+
         JLabel emergencyLabel = new JLabel("please select your symptoms",JLabel.CENTER);
             emergencyLabel.setPreferredSize(new Dimension(ContentPane.getWidth(), ContentPane.getHeight() / 5));
-            emergencyLabel.setBorder(BLACK_BORDER);
+            //emergencyLabel.setBorder(BLACK_BORDER);
             emergencyLabel.setVisible(true);
         ContentPane.add(emergencyLabel);
 
+        //calling method to create the symptoms
         createSymptomsList(patient);
 
         //textfield to enter name of patient
@@ -401,33 +440,39 @@ public class GUI {
         ContentPane.add(newPatientName);
 
 
-        //label to enter name of patient/doctor
+        //label display the id of patient
         JLabel newPatientID = new JLabel("");
         //setting size
         newPatientID.setPreferredSize(new Dimension((ContentPane.getWidth() / 4), (ContentPane.getWidth() / 20)));
         //adding border
         newPatientID.setBorder(BLACK_BORDER);
-
+        //displaying id
         newPatientID.setText("ID = " + (Patient.totalPatients.size()-1));
 
         newPatientID.setVisible(true);
         //adding to container
         ContentPane.add(newPatientID);
 
+        //button to proceed to the diagnosis screen
         JButton proceedButton = new JButton("Proceed");
         proceedButton.setPreferredSize(new Dimension((ContentPane.getWidth() / 4), (ContentPane.getWidth() / 20)));
         proceedButton.setBorder(BLACK_BORDER);
 
+            //adding functionality to the button
             proceedButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     System.out.println(patient.name);
+                    //setting patient name so that it is not left blank
                     patient.name= newPatientName.getText();
                     System.out.println(patient.name);
+                    //it will only proceed if the symptomsShown is not blank
                     if (!(patient.symptomsShown.isBlank())) {
+                        //calling method to display diagnosis
                         createFoundDiagnosis(patient, patient.symptomsShown, true);
                         System.out.println(patient.symptomsShown);
-                    } else {
+                    }
+                    else {
                         String warning = " Please select atleast one symtpom";
                         if(!(emergencyLabel.getText().contains(warning))){
                             emergencyLabel.setText(warning);
@@ -443,6 +488,7 @@ public class GUI {
     }
     }
 
+    //method to create the login screen for doctors and patients
     private static void createPatientDoctorLogin(String patientDoctor){
 
         //setting the layout of the container
@@ -526,24 +572,29 @@ public class GUI {
 
                 if (Patient.totalPatients.size() == 0 && patientDoctor == PATIENT) {
                     createRecetption("Sorry, there are no patients");
-                } else if (Doctor.totalDoctors.size() == 0 && patientDoctor == DOCTOR) {
+                }
+                else if (Doctor.totalDoctors.size() == 0 && patientDoctor == DOCTOR) {
                     createRecetption("Sorry, there are no doctors");
-                } else {
+                }
+                else {
                     if (patientDoctor == PATIENT) {
-
+                        //iterating through all the patients to see if any match
                         for (Patient p : Patient.totalPatients) {
                             if (p.name.equals(patientDoctorName.getText()) && p.ID == Integer.valueOf(patientDoctorID.getText())) {
                                 System.out.println("patient found");
+                                //calling method to go to the patients page
                                 createPatientPage(p);
                             }
                         }
                         patientDoctorLoginLabel.setText("please enter valid patient details");
 
                     } else {
+                        //iterating through all the doctors to see if any match
                         for (Doctor d : Doctor.totalDoctors) {
                             System.out.println(d.name + " " + patientDoctorName.getText() + d.ID + " " + Integer.valueOf(patientDoctorID.getText()));
                             if (d.name.equals(patientDoctorName.getText()) && d.ID == Integer.valueOf(patientDoctorID.getText())) {
                                 System.out.println("doctor found");
+                                //calling method to go to the doctors page
                                 createDoctorPage(d);
                             }
                         }
@@ -551,6 +602,7 @@ public class GUI {
                     }
                 }
             }
+                //need to use try catch as patientDoctorID can have a string value which would throw an exception when using Integer.valueOf
             catch(Exception exception){
                 patientDoctorLoginLabel.setText("Please enter valid ID");
                 }
@@ -575,17 +627,21 @@ public class GUI {
 
         ContentPane.setLayout(clearContentPaneAddLayout(ContentPane.getWidth()/2,40));
 
+        //setting symptomsshown to empty, as if it is not done the symptomsshown will have more symptoms than what have been selected.
+        patient.symptomsShown="";
+
         //creating a label that will say hello to the patient
         JLabel greetingPatient = new JLabel("Hello "+patient.name+" these are all your visits",JLabel.CENTER);
         //setting size
         greetingPatient.setPreferredSize(new Dimension(ContentPane.getWidth(), (int) (ContentPane.getSize().getHeight()/5)));
         //setting border, this is mainly used for testing
-        greetingPatient.setBorder(BLACK_BORDER);
+        //greetingPatient.setBorder(BLACK_BORDER);
         greetingPatient.setVisible(true);
         ContentPane.add(greetingPatient);
 
-        JButton visitDoctor = new JButton("Visit Dr."+patient.doctor.name);
 
+        //button to visit the doctor
+        JButton visitDoctor = new JButton("Visit Dr."+patient.doctor.name);
         //setting size of button
         visitDoctor.setPreferredSize(new Dimension((ContentPane.getWidth()/4),(ContentPane.getWidth()/20)));
         //setting border
@@ -603,25 +659,26 @@ public class GUI {
         ContentPane.add(visitDoctor);
 
 
-
+        //need to create container to hold buttons otherwise scrollpane won't work
         Container visitPane = new Container();
         //need to use setpreferredsize as otherwise it won't work in the scrollpane
-        visitPane.setPreferredSize(new Dimension(ContentPane.getWidth()-40,ContentPane.getHeight()));
+        visitPane.setPreferredSize(new Dimension(ContentPane.getWidth()-(ContentPane.getWidth()/25),ContentPane.getHeight()));
 
 
         FlowLayout buttonLayout = new FlowLayout();
-        buttonLayout.setVgap(40);
-        buttonLayout.setHgap(40);
-
-
+        buttonLayout.setVgap((ContentPane.getWidth()/25));
+        buttonLayout.setHgap((ContentPane.getWidth()/25));
+        //setting layout of the container
         visitPane.setLayout(buttonLayout);
 
-
+        //iterating through all the visits of a patient and adding them to the container as buttons
         for(Visits v : patient.doctorVisits){
+            //creating button
             JButton visit = new JButton("Visit: "+v.visitNumber);
+            //setting size
             visit.setPreferredSize(new Dimension((ContentPane.getWidth()/8),(ContentPane.getWidth()/40)));
             visit.setBorder(BLACK_BORDER);
-
+            //adding functionality
             visit.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     createVisitInformation(patient, v.visitNumber);
@@ -634,9 +691,13 @@ public class GUI {
 
         visitPane.setVisible(true);
 
+        //creating scroll pane in which the container holding the visit buttons will go
         JScrollPane visitScrollPane = new JScrollPane(visitPane);
-        visitScrollPane.setPreferredSize(new Dimension(ContentPane.getWidth()-40,(ContentPane.getWidth()/6)));
+        //setting size
+        visitScrollPane.setPreferredSize(new Dimension(ContentPane.getWidth()-(ContentPane.getWidth()/25),(ContentPane.getWidth()/6)));
+        //setting the vertical scroll bar visible only when needed
         visitScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        //setting the horizontal scroll bar to invisible
         visitScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         visitScrollPane.setVisible(true);
 
@@ -646,6 +707,7 @@ public class GUI {
         ContentPane.setVisible(true);
     }
 
+    //to create a page where the patient can see the information about their visit
     private static void createVisitInformation(Patient patient, int visitNumber){
 
         ContentPane.setLayout(clearContentPaneAddLayout(ContentPane.getWidth()/2,40));
@@ -658,7 +720,7 @@ public class GUI {
         //setting border, this is mainly used for testing
         //greetingPatient.setBorder(BLACK_BORDER);
 
-        //string that I am adding the information to which i will add to the textpane later
+        //string that I am adding the information to. which i will add to the textpane later
         String otherInfo ="Hello, " +patient.name;
 
         //so that the visit number has the correct suffix (st,nd,rd,th)
@@ -711,6 +773,7 @@ public class GUI {
 
     }
 
+    //to create a page where the doctor can access all their patients and the patients visits
     private static void createDoctorPage(Doctor doctor){
         ContentPane.setLayout(clearContentPaneAddLayout((ContentPane.getWidth()/2),40));
 
@@ -724,29 +787,30 @@ public class GUI {
         ContentPane.add(greetingDoctor);
 
 
-
+        //need to use container to hold the buttons otherwise it won't work with the scrollpane
         Container patientPane = new Container();
         //need to use setpreferredsize as otherwise it won't work in the scrollpane
         patientPane.setPreferredSize(new Dimension(ContentPane.getWidth()-40,ContentPane.getHeight()));
 
 
         FlowLayout buttonLayout = new FlowLayout();
-        buttonLayout.setVgap(40);
-        buttonLayout.setHgap(40);
-
-
+        buttonLayout.setVgap((ContentPane.getWidth()/25));
+        buttonLayout.setHgap((ContentPane.getWidth()/25));
+        //setting layout of container
         patientPane.setLayout(buttonLayout);
 
-
+        //iterating through each patient and making a button
         for(Patient p : doctor.patients){
+            //creating button
             JButton patient = new JButton(p.name);
             patient.setPreferredSize(new Dimension((ContentPane.getWidth()/8),(ContentPane.getWidth()/40)));
             patient.setBorder(BLACK_BORDER);
-
+            //adding functionality
             patient.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
 
                     System.out.println("patient information");
+                    //calling method to display the information
                     createDoctorPatientInformation(doctor, p);
                 }
             });
@@ -769,10 +833,11 @@ public class GUI {
         ContentPane.setVisible(true);
     }
 
-
+    //method to display the patient information
     private static void createDoctorPatientInformation(Doctor doctor,Patient patient){
 
         ContentPane.setLayout(clearContentPaneAddLayout((ContentPane.getWidth()/2),40));
+
 
         JLabel greeting = new JLabel("Hello Dr."+doctor.name+" this is Information regarding "+patient.name,JLabel.CENTER);
         greeting.setVisible(true);
@@ -780,16 +845,17 @@ public class GUI {
 
         //creating a text pane as jlabel doesn't support multiple lines without using html
         JTextPane Information = new JTextPane();
+        //setting editable false so the user can't edit information
         Information.setEditable(false);
         //setting border, this is mainly used for testing
         //Information.setBorder(BLACK_BORDER);
 
-
+        //it is easier to store everything in a string and then set it to the textpane
         String patientInfo ="";
         patientInfo = patientInfo.concat("Total visits: "+patient.doctorVisits.size());
 
+        //iterating through all the visits and adding relevant information to the string
         for(Visits v : patient.doctorVisits) {
-
             patientInfo = patientInfo.concat("\n\nVisit "+v.visitNumber+" \n\tDiagnosis: "+v.confirmedDiagnosis.diagnosisName);
         }
 
@@ -798,26 +864,31 @@ public class GUI {
         SimpleAttributeSet center = new SimpleAttributeSet();
         StyleConstants.setAlignment(center,StyleConstants.ALIGN_CENTER);
         Information.getStyledDocument().setParagraphAttributes(0,Information.getText().length(), center , false);
+
+        //setting text
         Information.setText(patientInfo);
+        //setting preferred size after adding text as preferred size wraps the content within it
         Information.setPreferredSize(Information.getPreferredSize());
         Information.setVisible(true);
 
-
+        //scrollpane to hold the textpane where the information is displayed
         JScrollPane ScrollInformation = new JScrollPane(Information);
+        //setting size
         ScrollInformation.setPreferredSize(new Dimension((int) ScrollInformation.getPreferredSize().getWidth(),ContentPane.getHeight()/2));
+        //setting vertical scrollbar to visible only when needed
         ScrollInformation.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        //setting horizontal scrollbar to never be visible
         ScrollInformation.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         ScrollInformation.setVisible(true);
 
-        ScrollInformation.setVisible(true);
         ContentPane.add(ScrollInformation);
 
         ContentPane.add(createBackButton(""));
         ContentPane.setVisible(true);
     }
 
+    //creating a radio button for each symptom, so the user can select which ever symptoms they have
     private static void createSymptomsList(Patient patient){
-        //creating a radio button for each symptom, so the user can select which ever symptoms they have
         for(String symptom:Diagnosis.symptomsList){
             //creating radio button and replacing all the underscores with spaces, since symptoms names have underscores in them
             JRadioButton symptomButton = new JRadioButton(symptom.replaceAll("_"," "));
@@ -847,11 +918,12 @@ public class GUI {
     }
 
     //creating a method for this as it is used at the beginning of almost every method.
+    //it removes all previous components and returns a flowlayout which is used as the layout for the container
     private static FlowLayout clearContentPaneAddLayout(int hGap, int vGap){
 
         //making current container invisible
         ContentPane.setVisible(false);
-        //clearing frame's content pane
+        //clearing container
         ContentPane.removeAll();
         //setting the size of the container
         ContentPane.setSize(GUI.getSize());
